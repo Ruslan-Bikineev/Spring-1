@@ -5,10 +5,10 @@ import org.example.bank.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UsersService {
+public class UserService {
     private final UserRepository userRepository;
 
-    public UsersService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

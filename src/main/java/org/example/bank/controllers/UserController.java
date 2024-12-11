@@ -3,7 +3,7 @@ package org.example.bank.controllers;
 
 import org.apache.catalina.connector.Response;
 import org.example.bank.models.User;
-import org.example.bank.services.UsersService;
+import org.example.bank.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller()
 @RequestMapping("v1/user")
-public class UsersController {
-    private final UsersService usersService;
+public class UserController {
+    private final UserService userService;
 
-    public UsersController(UsersService usersService) {
-        this.usersService = usersService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/list")
     @ResponseBody
     public Iterable<User> getAllUsers() {
-        return usersService.getAllUsers();
+        return userService.getAllUsers();
     }
 
     @PostMapping()
@@ -35,10 +35,10 @@ public class UsersController {
                     .status(Response.SC_BAD_REQUEST)
                     .body("{message:name is required}");
         } else {
-            if (usersService.saveUser(new User(name))) {
+            if (userService.saveUser(new User(name))) {
                 return ResponseEntity
                         .status(Response.SC_CREATED)
-                        .body(usersService.findByName(name));
+                        .body(userService.findByName(name));
             } else {
                 return ResponseEntity
                         .status(Response.SC_CONFLICT)
