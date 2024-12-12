@@ -6,11 +6,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
 
+@Data
 @Getter
 @Setter
 @Entity
@@ -23,7 +25,8 @@ public class User {
     private String name;
     private Timestamp created_at;
 
-    protected User() {}
+    protected User() {
+    }
 
     public User(String name) {
         this.name = name;
