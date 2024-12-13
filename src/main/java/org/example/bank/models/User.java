@@ -7,15 +7,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Data
-@Getter
-@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
@@ -24,9 +22,6 @@ public class User {
     private Long id;
     private String name;
     private Timestamp created_at;
-
-    protected User() {
-    }
 
     public User(String name) {
         this.name = name;
