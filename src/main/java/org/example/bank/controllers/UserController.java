@@ -1,9 +1,12 @@
 package org.example.bank.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.catalina.connector.Response;
 import org.example.bank.models.User;
 import org.example.bank.services.UserService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Map;
+
 @Controller()
 @RequestMapping("v1/user")
 public class UserController {
     private final UserService userService;
+    private final ObjectMapper objectMapper;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ObjectMapper objectMapper) {
         this.userService = userService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping("/list")
@@ -29,11 +36,14 @@ public class UserController {
 
     @PostMapping()
     @ResponseBody
-    public ResponseEntity<?> saveUser(@RequestParam(value = "name") String name) {
+    public ResponseEntity<?> saveUser(@RequestParam(value = "name") String name)
+            throws JsonProcessingException {
         if (name.isEmpty()) {
             return ResponseEntity
                     .status(Response.SC_BAD_REQUEST)
-                    .body("{message:name is required}");
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(objectMapper.writeValueAsString(
+                            Map.of("message", "name is required")));
         } else {
             if (userService.saveUser(new User(name))) {
                 return ResponseEntity
@@ -42,7 +52,9 @@ public class UserController {
             } else {
                 return ResponseEntity
                         .status(Response.SC_CONFLICT)
-                        .body("{message:user " + name + " already exists}");
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(objectMapper.writeValueAsString(
+                                Map.of("message", "user: " + name + " already exists")));
             }
         }
     }

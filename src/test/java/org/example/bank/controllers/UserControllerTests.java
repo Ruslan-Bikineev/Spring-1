@@ -5,7 +5,6 @@ import org.example.bank.BankApplicationTests;
 import org.example.bank.models.User;
 import org.example.bank.repositories.UserRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class UserControllerTests extends BankApplicationTests {
     }
 
     @Test
-    void getV1UserListEndpointTest_200() {
+    void getAllUsersTest_200() {
         ResponseEntity<List<User>> responseEntity = restTemplate.exchange(
                 "/v1/user/list",
                 HttpMethod.GET,
@@ -57,7 +56,7 @@ public class UserControllerTests extends BankApplicationTests {
     }
 
     @Test
-    void postV1UserEndpointTest_201() {
+    void createUserTest_201() {
         var uri = UriComponentsBuilder.fromUriString("/v1/user")
                 .queryParam("name", "testName");
         ResponseEntity<User> responseEntity = restTemplate.exchange(
@@ -68,7 +67,35 @@ public class UserControllerTests extends BankApplicationTests {
                 });
         softAssertions.assertThat(responseEntity.getStatusCodeValue() == HttpStatus.CREATED.value());
         Optional<User> byName = userRepository.findByName(responseEntity.getBody().getName());
-        Assertions.assertTrue(byName.isPresent());
-        Assertions.assertTrue(byName.get().equals(responseEntity.getBody()));
+        softAssertions.assertThat(byName.isPresent());
+        softAssertions.assertThat(byName.get().equals(responseEntity.getBody()));
+    }
+
+    @Test
+    void postAlreadyExistsUserTest_409() {
+        var uri = UriComponentsBuilder.fromUriString("/v1/user")
+                .queryParam("name", "Egor");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                uri.buildAndExpand().toUri(),
+                HttpMethod.POST,
+                null,
+                new ParameterizedTypeReference<>() {
+                });
+        softAssertions.assertThat(responseEntity.getStatusCodeValue() == HttpStatus.CONFLICT.value());
+        softAssertions.assertThat(responseEntity.getBody().contains("user: Egor already exists"));
+    }
+
+    @Test
+    void postNullUserNameTest_400() {
+        var uri = UriComponentsBuilder.fromUriString("/v1/user")
+                .queryParam("name", "");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                uri.buildAndExpand().toUri(),
+                HttpMethod.POST,
+                null,
+                new ParameterizedTypeReference<>() {
+                });
+        softAssertions.assertThat(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        softAssertions.assertThat(responseEntity.getBody().contains("name is required"));
     }
 }
