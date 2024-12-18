@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller()
@@ -26,7 +27,7 @@ public class UserController {
 
     @GetMapping("/list")
     @ResponseBody
-    public Iterable<User> getAllUsers() {
+    public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 

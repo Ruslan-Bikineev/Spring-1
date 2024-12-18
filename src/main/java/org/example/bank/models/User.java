@@ -8,6 +8,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -21,10 +22,10 @@ public class User {
     @SequenceGenerator(name = "users_seq", sequenceName = "users_id_seq", allocationSize = 1)
     private Long id;
     private String name;
+    @CreationTimestamp
     private Timestamp created_at;
 
     public User(String name) {
         this.name = name;
-        this.created_at = new Timestamp(System.currentTimeMillis());
     }
 }

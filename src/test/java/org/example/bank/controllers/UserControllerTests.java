@@ -17,9 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 public class UserControllerTests extends BankApplicationTests {
     @Autowired
@@ -48,8 +46,7 @@ public class UserControllerTests extends BankApplicationTests {
                 });
         softAssertions.assertThat(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
         List<User> users = responseEntity.getBody();
-        List<User> dbFindAll = StreamSupport.stream(userRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        List<User> dbFindAll = userRepository.findAll();
         IntStream.range(0, dbFindAll.size()).forEach(i -> {
             softAssertions.assertThat(dbFindAll.get(i).equals(users.get(i)));
         });
@@ -57,7 +54,7 @@ public class UserControllerTests extends BankApplicationTests {
 
     @Test
     void createUserTest_201() {
-        var uri = UriComponentsBuilder.fromUriString("/v1/user")
+        UriComponentsBuilder uri = UriComponentsBuilder.fromUriString("/v1/user")
                 .queryParam("name", "testName");
         ResponseEntity<User> responseEntity = restTemplate.exchange(
                 uri.buildAndExpand().toUri(),
