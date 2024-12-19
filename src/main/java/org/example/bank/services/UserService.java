@@ -19,9 +19,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User saveUser(User user) {
+    public User saveUser(User user) throws UserAlreadyExistsException {
         if (userRepository.findByName(user.getName()).isPresent()) {
-            throw new UserAlreadyExistsException("user: " + user.getName() + " already exists");
+            throw new UserAlreadyExistsException(user.getName());
         }
         return userRepository.save(user);
     }
