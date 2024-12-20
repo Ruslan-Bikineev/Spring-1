@@ -1,6 +1,7 @@
 package org.example.bank.controllers.advice;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.example.bank.exceptions.IncorrectUserNameException;
 import org.example.bank.exceptions.UserAlreadyExistsException;
 import org.example.bank.models.ErrorInfo;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,13 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseBody
     ErrorInfo exceptionMissingServletRequestParameterHandler(HttpServletRequest req, Exception ex) {
+        return new ErrorInfo(req.getRequestURL().toString(), ex);
+    }
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IncorrectUserNameException.class)
+    @ResponseBody
+    ErrorInfo exceptionIncorrectUserNameHandler(HttpServletRequest req, Exception ex) {
         return new ErrorInfo(req.getRequestURL().toString(), ex);
     }
 }

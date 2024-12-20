@@ -1,5 +1,6 @@
 package org.example.bank.services;
 
+import org.example.bank.exceptions.IncorrectUserNameException;
 import org.example.bank.exceptions.UserAlreadyExistsException;
 import org.example.bank.models.User;
 import org.example.bank.repositories.UserRepository;
@@ -19,14 +20,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User saveUser(User user) throws UserAlreadyExistsException {
-        if (userRepository.findByName(user.getName()).isPresent()) {
+    public User saveUser(User user)
+            throws UserAlreadyExistsException, IncorrectUserNameException {
+        if (user.getName().isBlank()) {
+            throw new IncorrectUserNameException(user.getName());
+        } else if (userRepository.findByName(user.getName()).isPresent()) {
             throw new UserAlreadyExistsException(user.getName());
         }
         return userRepository.save(user);
-    }
-
-    public User findByName(String name) {
-        return userRepository.findByName(name).orElse(null);
     }
 }
